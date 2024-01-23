@@ -3,6 +3,8 @@
 # Import the theme
 theme: jekyll-theme-chirpy
 
+# Change the following value to '/PROJECT_NAME' ONLY IF your site type is GitHub Pages Project sites
+# and doesn't have a custom domain.
 baseurl: ""
 
 # The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
@@ -10,22 +12,21 @@ baseurl: ""
 # otherwise, the layout language will use the default value of 'en'.
 lang: en
 
-# Change to your timezone › https://kevinnovak.github.io/Time-Zone-Picker
+# Change to your timezone › http://www.timezoneconverter.com/cgi-bin/findzone/findzone
 timezone: Europe/Paris
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Ap4sh's blog
+title: Ap4sh's blog # the main title
 
-tagline: A blog about security, CTF, writeups, researches and more # it will display as the sub-title
+tagline: A blog about security, CTF writeups, researches and more # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  A blog about security, CTF, writeups, researches and more
+  A blog about security, CTF writeups, researches and more
 
-# Fill in the protocol & hostname for your site.
-# e.g. 'https://username.github.io', note that it does not end with a '/'.
-url: "https://ap4sh.github.io"
+# fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
+url: "https://Ap4sh.github.io"
 
 github:
   username: Ap4sh # change to your github username
@@ -193,7 +194,5 @@ jekyll-archives:
     category: category
     tag: tag
   permalinks:
-    tag: /tags/:name/
-    category: /categories/:name/
     tag: /tags/:name/
     category: /categories/:name/
