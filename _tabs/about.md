@@ -11,7 +11,7 @@ I'm passionate about many areas of IT especially web hacking. I also love doing 
 
 Profiles :
 
-(Actually doing only HackTheBox to grind rank 50 world - rank 2 France)
+(Actually doing only HackTheBox to grind rank 50)
 
 [Hack The Box](https://app.hackthebox.com/profile/377742)
 
