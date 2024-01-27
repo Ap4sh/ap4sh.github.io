@@ -15,7 +15,7 @@ Profiles :
 
 [Hack The Box](https://app.hackthebox.com/profile/377742)
 
-![HackTheBox](https://cdn.discordapp.com/attachments/1033092812415189163/1200486146883461270/377742.png?ex=65c65ad9&is=65b3e5d9&hm=59c069fcd6ce0816f3d60ba20f0716d47aa8becf828fb5b624abe13a60c9d178&)
+![HackTheBox](https://www.hackthebox.com/badge/image/377742)
 
 [Root Me](https://www.root-me.org/Ap4sh)  ,
 [TryHackMe](https://tryhackme.com/p/Ap4sh)  ,
