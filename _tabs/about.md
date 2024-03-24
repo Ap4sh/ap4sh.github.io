@@ -20,8 +20,8 @@ Profiles :
 [Root Me](https://www.root-me.org/Ap4sh)  ,
 [TryHackMe](https://tryhackme.com/p/Ap4sh)  ,
 [TheBlackSide](https://theblackside.fr/profil/Ap4sh)  ,
-[CodeWars](https://www.codewars.com/users/Ap4sh) (I'm not really active on it)  ,
+[CodeWars](https://www.codewars.com/users/Ap4sh)  ,
 [VulnLab](https://www.vulnlab.com/)  ,
-YesWeHack  
+[YesWeHack](https://yeswehack.com/hunters/ap4sh)
 
 I am also on other platforms but not very active. I'm actually more into HackTheBox, VulnLab and YesWeHack.
