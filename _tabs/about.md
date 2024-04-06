@@ -6,7 +6,7 @@ order: 4
 
 Hi !
 
-I'm a 18 yo cyber enthusiast currently student at [ESNA](https://esna.bzh/) school.
+I'm a 19 yo cyber enthusiast currently student at [ESNA](https://esna.bzh/) school.
 I'm passionate about many areas of IT especially web hacking. I also love doing CTF's, development, and some bug hunting.
 
 Profiles :
@@ -14,6 +14,8 @@ Profiles :
 (Actually doing only HackTheBox to grind #10)
 
 [Hack The Box](https://app.hackthebox.com/profile/377742)
+
+got 22 last seasonnal [results](https://labs.hackthebox.com/achievement/season/377742/4)
 
 ![HackTheBox](https://www.hackthebox.com/badge/image/377742)
 
