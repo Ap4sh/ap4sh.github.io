@@ -11,8 +11,6 @@ I'm passionate about many areas of IT especially web hacking. I also love doing 
 
 Profiles :
 
-(Actually doing only HackTheBox to grind #10)
-
 [Hack The Box](https://app.hackthebox.com/profile/377742)
 
 got 22 last seasonnal [results](https://labs.hackthebox.com/achievement/season/377742/4)
