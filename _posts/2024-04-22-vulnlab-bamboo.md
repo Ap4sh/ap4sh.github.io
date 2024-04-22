@@ -1,4 +1,9 @@
-
+---
+title: "VulnLab - Bamboo"
+layout: "post"
+categories: "Linux"
+tags: ["Web", "VulnLab", "Writeup"]
+---
 
 ![](https://images-ext-1.discordapp.net/external/PDLWokWEFAzwWIntBYuw_bmLGgLgkKRvTusJomhPbRM/https/vulnlab-assets.s3.eu-central-1.amazonaws.com/bamboo_slide.png?format=webp&quality=lossless)
 
