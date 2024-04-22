@@ -6,7 +6,7 @@ order: 4
 
 Hi !
 
-I'm a 19 yo cyber enthusiast currently student at [ESNA](https://esna.bzh/) school.
+I'm a 19 yo cyber enthusiast currently student & pentester in France..
 I'm passionate about many areas of IT especially web hacking. I also love doing CTF's, development, and some bug hunting.
 
 Profiles :
