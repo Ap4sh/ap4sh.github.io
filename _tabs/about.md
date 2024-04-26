@@ -4,10 +4,12 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-Hi !
+Hey :)
 
 I'm a 19 yo cyber enthusiast currently student & pentester in France.
-I'm passionate about many areas of IT especially web hacking. I also love doing CTF's, development, and some bug hunting.
+I'm passionate about many areas of IT especially Active Directory and web hacking, but I consider myself a jack of all trades, master of none, always eager to learn and explore new domains.
+I also love doing CTF's, development, and i'm also doing some bug hunting.
+
 
 Profiles :
 
