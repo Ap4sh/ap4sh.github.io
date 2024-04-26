@@ -42,9 +42,8 @@ social:
     # The first element serves as the copyright owner's link
     - https://twitter.com/Ap4sh # change to your twitter homepage
     - https://github.com/Ap4sh # change to your github homepage
-    - https://www.root-me.org/Ap4sh
-    - https://tryhackme.com/p/Ap4sh
     - https://app.hackthebox.com/profile/377742
+    - https://www.root-me.org/Ap4sh
 
 google_site_verification: # fill in to your verification string
 
