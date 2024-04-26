@@ -38,7 +38,6 @@ social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
   name: Samy
-  email: Ap4sh1337@protonmail.com
   links:
     # The first element serves as the copyright owner's link
     - https://twitter.com/Ap4sh # change to your twitter homepage
@@ -48,7 +47,7 @@ social:
     - https://tryhackme.com/p/Ap4sh
     # - https://www.facebook.com/username
     - https://app.hackthebox.com/profile/377742
-    # - https://www.linkedin.com/in/username
+    - https://www.linkedin.com/in/samymedjahed/
 
 google_site_verification: # fill in to your verification string
 
