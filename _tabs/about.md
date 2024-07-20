@@ -20,9 +20,6 @@ Profiles :
 Last seasonnal results : [results](https://labs.hackthebox.com/achievement/season/377742/4)
 
 [Root Me](https://www.root-me.org/Ap4sh)  ,
-[TryHackMe](https://tryhackme.com/p/Ap4sh)  ,
-[TheBlackSide](https://theblackside.fr/profil/Ap4sh)  ,
-[CodeWars](https://www.codewars.com/users/Ap4sh)  ,
 [VulnLab](https://www.vulnlab.com/)  ,
 [YesWeHack](https://yeswehack.com/hunters/ap4sh)
 
