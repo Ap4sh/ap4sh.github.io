@@ -24,3 +24,4 @@ Last seasonnal results : [results](https://labs.hackthebox.com/achievement/seaso
 [YesWeHack](https://yeswehack.com/hunters/ap4sh)
 
 I am also on other platforms but not very active. I'm actually more into HackTheBox, VulnLab and YesWeHack.
+(I'll maybe upload more writeups on this blog soon)
