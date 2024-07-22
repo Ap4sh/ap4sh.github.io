@@ -14,8 +14,9 @@ I also love doing CTF's, development, and i'm also doing some bug hunting.
 Profiles :
 
 [Hack The Box](https://app.hackthebox.com/profile/377742) 
+(#2 french player)
 
-![HackTheBox](https://www.hackthebox.com/badge/image/377742) (#2 french player)
+![HackTheBox](https://www.hackthebox.com/badge/image/377742) 
 
 Last seasonnal results : [season 4](https://labs.hackthebox.com/achievement/season/377742/4) [season 5](https://labs.hackthebox.com/achievement/season/377742/5)
 
