@@ -19,9 +19,9 @@ tags: ["Web", "Hackthebox", "Writeup"]
 - System blood : **myDonut** 0H 13M
 - **IP** 10.10.11.8
 
-# Enumeration
+## Enumeration
 ---
-## nmap
+### nmap
 
 ```bash
 ❯ nmap -T4 -p22,5000 -A -O -sC -sV -Pn 10.10.11.8
@@ -138,7 +138,7 @@ http://10.10.11.8:5000/support
 
 found also http://10.10.11.8:5000/dashboard when fuzzing.
 
-## XSS on user agent
+### XSS on user agent
 
 pattern recognition, trying to run XSS on user agent will be successful 
 
@@ -180,7 +180,7 @@ shell.sh :
 ```
 
 then just start web server & listener, wait for reverse shell
-# root part
+## root part
 
 we can run "/usr/bin/syscheck" as root without password
 
