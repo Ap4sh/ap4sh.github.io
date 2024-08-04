@@ -14,7 +14,6 @@ I also love doing CTF's, development, and i'm also doing some bug hunting.
 Profiles :
 
 [Hack The Box](https://app.hackthebox.com/profile/377742) 
-(#2 french player - #6 world)
 
 ![HackTheBox](https://i.imgur.com/Qm6wPOG.png) 
 
